@@ -102,27 +102,31 @@ ECHO 핀에서 돌아오는 펄스 폭을 측정해 거리를 계산합니다.
 ---
 
 # Repository Structure
+
 Ultrasonic-sensor
-│
 ├─ PARKMicrochipstudio
-│ └─ park
-│ ├─ main.c
-│ ├─ board.c
-│ ├─ timer0.c
-│ ├─ ultrasonic.c
-│ ├─ switch.c
-│ ├─ tone.c
-│ ├─ uart.c
-│ ├─ header files
-│ └─ Microchip Studio project files
-│
+│  └─ park
+│     ├─ Debug
+│     ├─ board.c
+│     ├─ board.h
+│     ├─ main.c
+│     ├─ park.atsln
+│     ├─ park.componentinfo.xml
+│     ├─ park.cproj
+│     ├─ protocol.c
+│     ├─ protocol.h
+│     ├─ switch.c
+│     ├─ switch.h
+│     ├─ timer0.c
+│     ├─ timer0.h
+│     ├─ tone.c
+│     ├─ tone.h
+│     ├─ uart.c
+│     ├─ uart.h
+│     ├─ ultrasonic.c
+│     └─ ultrasonic.h
 ├─ PARKcad
-│ ├─ 회로 설계 PDF
-│ ├─ BOM 문서
-│ ├─ 발주 부품 자료
-│ └─ footprint 설정 자료
-│
-└─ 프로젝트 결과 이미지
+└─ 캡처.PNG
 
 ---
 
