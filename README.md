@@ -30,7 +30,7 @@
 
 ## 사용 환경 (Environment)
 
-- MCU/보드: (예: Arduino UNO / AVR / STM32 등)  ← 네 환경에 맞게 한 줄만 수정
+- MCU/보드: (예: Arduino UNO / AVR / STM32 등)  
 - Sensor: Ultrasonic (예: HC-SR04 등)
 - Interface: GPIO, (optional) Timer/Interrupt, UART
 
