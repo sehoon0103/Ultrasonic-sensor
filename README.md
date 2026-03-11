@@ -1,64 +1,79 @@
-# Ultrasonic Sensor Practice (개인 실습)
+# Ultrasonic Parking Detection System
 
-이 레포는 완성형 프로젝트 라기보다, 임베디드 현업에서 자주 쓰는 기본기(Interrupt, UART 등)를
-혼자 실습하고 정리한 기록입니다.  
-초음파 센서(Ultrasonic)를 예제로 삼아, 거리 측정 흐름과 입출력 제어를 연습했습니다.
+AVR 기반 마이크로컨트롤러에서 초음파 센서를 이용해 거리를 측정하고  
+설치 기준 위치와 비교하여 주차 여부를 판단하는 임베디드 실습 프로젝트입니다.
 
----
-
-## 목적 (Why)
-
-- 초음파 센서의 기본 동작(TRIG/ECHO) 이해
-- 타이밍 기반 측정 로직을 직접 구현해보기
-- 디버깅/검증을 위해 UART 출력(Serial logging) 습관 만들기
-- Interrupt(또는 타이머 기반 처리) 같은 “실무 빈출” 포인트를 개인 실습으로 체득
+이 레포는 단순 센서 테스트 수준을 넘어서  
+초음파 센서 제어, 인터럽트 기반 시간 측정, UART 통신, RS 485 프로토콜 처리,  
+EEPROM 저장, 스위치 입력 처리까지 함께 다룬 기록입니다.
 
 ---
 
-## 무엇을 해봤나 (What I practiced)
+## Overview
+
+프로젝트의 핵심 흐름은 다음과 같습니다.
+
+1. 초음파 센서에 TRIG 펄스를 출력
+2. ECHO 핀의 HIGH 유지 시간을 인터럽트로 측정
+3. 측정된 시간으로 거리 계산
+4. 저장된 설치 기준 위치와 비교
+5. 차량 감지 여부를 LED와 내부 레지스터 값으로 반영
+6. UART 및 RS 485 통신으로 상태 확인 가능
+
+---
+
+## Main Features
 
 - Ultrasonic distance measurement
-  - TRIG 펄스 출력 → ECHO 펄스 폭 측정 → 거리(cm) 계산
-- Interrupt / Timing
-  - ECHO 펄스 폭을 안정적으로 읽기 위한 인터럽트(또는 타이머 기반) 처리 연습
-- UART (Serial logging)
-  - 측정값/상태를 UART로 출력해 동작 확인(테스트/검증용)
+  - TRIG 출력
+  - ECHO 펄스폭 측정
+  - 거리 계산
 
-> ※ 실제 구현 방식(외부 인터럽트 사용 여부, 타이머 채널, baudrate 등)은 코드 기준으로 결정됩니다.
+- Interrupt based timing
+  - INT0 인터럽트를 사용해 ECHO rising falling edge 처리
 
----
+- Timer0 utility
+  - millis
+  - micros
+  - delay
 
-## 사용 환경 (Environment)
+- Parking detection logic
+  - 설치 기준 위치와 현재 거리 차이를 비교해 주차 여부 판단
+  - 일정 시간 이상 유지된 상태만 반영하도록 안정화 로직 적용
 
-- MCU/보드: (예: Arduino UNO / AVR / STM32 등)  
-- Sensor: Ultrasonic (예: HC-SR04 등)
-- Interface: GPIO, (optional) Timer/Interrupt, UART
+- EEPROM storage
+  - 설치 기준 위치를 EEPROM에 저장
+  - 전원 재시작 후에도 기준값 유지
 
----
+- Switch input
+  - 스위치 입력으로 현재 거리를 설치 기준 위치로 저장
 
-## 실행/테스트 방법 (How to test)
-
-1. 보드 연결 후 업로드/빌드
-2. 센서 앞 거리를 바꿔가며 값 변화 확인
-3. Serial Monitor(UART)로 출력 로그 확인
-
----
-
-## 내가 얻은 것 (What I learned)
-
-- 작은 기능이라도 측정 → 계산 → 출력(로그) → 검증까지 흐름을 끝까지 가져가는 연습
-- 인터럽트/타이밍 이슈(노이즈, 튀는 값, 측정 안정화)를 의식하고 구조를 잡는 습관
-- UART 로그를 활용해 원인 파악을 빠르게 하는 습관
+- UART and RS 485 communication
+  - UART 링버퍼 기반 송수신
+  - RS 485 송수신 방향 제어
+  - ASCII 프레임 기반 프로토콜 지원
 
 ---
 
-## Notes
+## Repository Structure
 
-- 이 레포는 개인 학습/기록 목적이라 코드가 간단할 수 있습니다.
-- 추후에는 필터링(예: moving average) 또는 타이머 캡처 입력 같은 방식으로 개선할 수 있습니다.
-
----
-
-## Links
-
-- tinkercad :(https://www.tinkercad.com/things/6vAZcxkCDwX-05/editel?returnTo=https%3A%2F%2Fwww.tinkercad.com%2Fdashboard%2Fdesigns%2Fall)
+```text
+Ultrasonic-sensor
+├─ PARKMicrochipstudio
+│  └─ park
+│     ├─ main.c
+│     ├─ board.c / board.h
+│     ├─ ultrasonic.c / ultrasonic.h
+│     ├─ timer0.c / timer0.h
+│     ├─ uart.c / uart.h
+│     ├─ protocol.c / protocol.h
+│     ├─ switch.c / switch.h
+│     ├─ tone.c / tone.h
+│     ├─ park.cproj
+│     └─ park.atsln
+├─ PARKcad
+│  ├─ park.pdf
+│  ├─ PARK_BOM.pdf
+│  ├─ PARK 발주품.PNG
+│  └─ footprint설정.png
+└─ 캡처.PNG
